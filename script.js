@@ -32,7 +32,15 @@ function numberToWords(number) {
 function timeToWords(hour, minute) {
     let timeWords = '';
 
-    if (minute === 0) {
+    // Noon and midnight
+    if (hour === 12 && minute === 0) {
+        timeWords = 'Noon';
+    } else if (hour === 0 && minute === 0) {
+        timeWords = 'Midnight';
+    }
+
+    // On the hour, quarters and halves
+    else if (minute === 0) {
         timeWords = numberToWords(hour) + ' o\'clock';
     } else if (minute === 15) {
         timeWords = 'quarter past ' + numberToWords(hour);
@@ -40,7 +48,10 @@ function timeToWords(hour, minute) {
         timeWords = 'half past ' + numberToWords(hour);
     } else if (minute === 45) {
         timeWords = 'quarter to ' + numberToWords(hour + 1);
-    } else if (minute < 30) {
+    }
+
+    // Everything else
+    else if (minute < 30) {
         timeWords = numberToWords(minute) + ' past ' + numberToWords(hour);
     } else {
         timeWords = numberToWords(60 - minute) + ' to ' + numberToWords(hour + 1);
@@ -52,8 +63,8 @@ function timeToWords(hour, minute) {
 // Translate the current time into words
 const timeInWords = timeToWords(hour, minute);
 
-// Output the time in words
-console.log('It is ' + timeInWords);
+console.log(timeInWords);
+
 
 // add the time in words to the div with the id "time"
 document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
