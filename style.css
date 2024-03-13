@@ -3,8 +3,14 @@ body {
     color: #bfd0fc;
 }
 
-#time {
+/* Serving Jaune */
+@font-face {
     font-family: 'NaN Jaune';
+    src: url('./fonts/NaNJaune-Midi-Var.woff2');
+}
+
+#time {
+    font-family: 'NaN Jaune', sans-serif;
     font-size: 12vw;
     text-transform: uppercase;
     font-weight: 800;
