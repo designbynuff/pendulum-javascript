@@ -1,0 +1,40 @@
+body {
+    background-color: #1b1c21;
+    color: #bfd0fc;
+}
+
+#time {
+    font-family: 'NaN Jaune';
+    font-size: 12vw;
+    text-transform: uppercase;
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -1px;
+    margin-bottom: 8rem;
+}
+
+.container {
+    /* display: flex;
+    justify-content: center;
+    align-items: top; */
+    margin: 4rem;
+    min-height: 80vh;
+}
+
+.footer p {
+    font-family: 'space mono';
+    line-height: 0.75;
+}
+
+a {
+    color: #bfd0fc;
+    text-decoration: none;
+    border-bottom: 1px dotted #bfd0fc;
+}
+
+a:hover,
+a:focus {
+    color: #1b1c21;
+    background-color: #bfd0fc;
+    padding: 0.1rem;
+}
