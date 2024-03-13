@@ -58,3 +58,14 @@ console.log('It is ' + timeInWords);
 // add the time in words to the div with the id "time"
 document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
 
+// Automatically update the time every second
+// setInterval(function () {
+//     let currentTime = new Date();
+//     let hour = currentTime.getHours();
+//     let minute = currentTime.getMinutes();
+//     if (hour > 12) {
+//         hour = hour % 12;
+//     }
+//     const timeInWords = timeToWords(hour, minute);
+//     document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
+// }, 1000);
