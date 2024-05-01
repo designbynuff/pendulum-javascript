@@ -1,0 +1,7 @@
+THINGS TO DO:
+
+-  Ask for location
+    - Ideally, also an input field/search bar that allows you to input any location
+- Grab Date, time, city, long/lat, sunrise, sunset and moon phase from API
+- innerHTML each of those elements
+- update everything in real time? NO! Use RTC to keep date/time updated after initial API call
