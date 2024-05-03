@@ -61,4 +61,9 @@ a:focus {
 
 .detail {
     display: flex;
-    margin: -1
+    margin: -16px auto;
+}
+
+.icon {
+    margin-right: 1rem;
+}
