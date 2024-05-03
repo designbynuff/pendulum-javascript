@@ -16,16 +16,61 @@
 <body>
 
     <div class="container">
-        <div id="time">
+        <div class="main" id="time">
         </div>
 
-        <div class="footer">
+        <!-- Display city, long/lat, date, time, sunrise, sunset and moon phase -->
+        <div class="secondary">
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_pin.svg" alt="pin" class="icon">
+                    <p class="info" id="city">[Paris]</p>
+                </div>
+                <div class="detail">
+                    <img src="img/icon_location.svg" alt="icon_location" class="icon">
+                    <p class="info" id="latlong">[48.856613, 2.352222]</p>
+                </div>
+            </div>
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_calendar.svg" alt="date" class="icon">
+                    <p class="info" id="date">[Thu Mar 14, 2024]</p>
+                </div>
+                <div class="detail">
+                    <img src="img/icon_hourglass.svg" alt="time" class="icon">
+                    <p class="info" id="digitaltime">[12:12:08 CET]</p>
+                </div>
+            </div>
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_sunrise.svg" alt="sunrise" class="icon">
+                    <p class="info" id="sunrise">[08:08]</p>
+                </div>
+                <div class="detail">
+                    <img src="img/icon_sunset.svg" alt="sunset" class="icon">
+                    <p class="info" id="sunset">[18:32]</p>
+                </div>
+            </div>
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_moon_new.svg" alt="moon phase" id="moon-icon" class="icon">
+                    <p class="info" id="moon-phase">[New Moon]</p>
+                </div>
+                <div class="detail">
+                    <img src="img/icon_nuff.svg" alt="nuff" class="icon">
+                    <p class="info">Made for <a href="https://www.fddrsn.net/teaching/time/">Time</a> by <a
+                            href="https://nuff.design">Nuff</a> </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="footer">
             <p>Words, for Pendulum.</p>
             <p>Made for <a href="https://www.fddrsn.net/teaching/time/">Time</a> as part of <a
                     href="https://itp.nyu.edu/lowres/">IMA Low Res</a>
                 2023-24</p>
             <p>by <a href="https://nuff.design">Nuff</a></p>
-        </div>
+        </div> -->
     </div>
 
     <script src="script.js"></script>

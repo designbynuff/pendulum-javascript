@@ -1,6 +1,7 @@
 body {
     background-color: #1b1c21;
     color: #bfd0fc;
+    font-family: 'space mono', monospace;
 }
 
 /* Serving Jaune */
@@ -8,6 +9,10 @@ body {
     font-family: 'NaN Jaune';
     src: url('./fonts/NaNJaune-Midi-Var.woff2');
 }
+
+/* .main {
+    min-height: 70vh;
+} */
 
 #time {
     font-family: 'NaN Jaune', sans-serif;
@@ -20,11 +25,11 @@ body {
 }
 
 .container {
-    /* display: flex;
-    justify-content: center;
-    align-items: top; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin: 4rem;
-    min-height: 80vh;
+    min-height: 90vh;
 }
 
 .footer p {
@@ -43,4 +48,22 @@ a:focus {
     color: #1b1c21;
     background-color: #bfd0fc;
     padding: 0.1rem;
+}
+
+.secondary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    border-top: 1px solid #bfd0fc;
+    padding: 2rem 0;
+}
+
+.details {}
+
+.detail {
+    display: flex;
+    margin: -16px auto;
+}
+
+.icon {
+    margin-right: 1rem;
 }
