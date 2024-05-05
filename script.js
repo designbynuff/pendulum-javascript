@@ -29,6 +29,7 @@ window.addEventListener('load', function () {
 
     navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 
+
     // Get the current time
     let currentTime = new Date();
 
@@ -190,48 +191,103 @@ window.addEventListener('load', function () {
             });
     }
 
+    // NOT WORKING, NEED API OR NEW CALCULATION CODE Calculate moon phase based on date
+    function calculateMoonPhase() {
+        let year = currentTime.getFullYear();
+        let month = currentTime.getMonth() + 1;
+        let day = currentTime.getDate();
+        let c, e, jd;
+        if (month < 3) {
+            year--;
+            month += 12;
+        }
+        month += 1;
+        c = 365.25 * year;
+        e = 30.6 * month;
+        jd = c + e + day - 694039.09;
+        jd /= 29.5305882;
+        jd = parseInt(jd);
+        jd = jd % 8;
+        return jd;
+    }
+
+    // Turn moon phase number into a string
+    function getMoonPhaseName(phase) {
+        let moonPhase;
+        switch (phase) {
+            case 0:
+                moonPhase = 'New Moon';
+                break;
+            case 1:
+                moonPhase = 'Waxing Crescent';
+                break;
+            case 2:
+                moonPhase = 'First Quarter';
+                break;
+            case 3:
+                moonPhase = 'Waxing Gibbous';
+                break;
+            case 4:
+                moonPhase = 'Full Moon';
+                break;
+            case 5:
+                moonPhase = 'Waning Gibbous';
+                break;
+            case 6:
+                moonPhase = 'Last Quarter';
+                break;
+            case 7:
+                moonPhase = 'Waning Crescent';
+                break;
+        }
+        return moonPhase;
+    }
+
     // Get moon phase
     function getMoonPhase() {
         console.log("getting moon phase");
-        fetch('https://api.farmsense.net/v1/moonphases/?d=' + new Date().toISOString().slice(0, 10))
-            .then(response => response.json())
-            .then(data => {
-                moonphase = data[0].Phase;
-                console.log(moonphase);
-                document.getElementById('moonphase').innerHTML = moonphase;
+        // fetch('https://moon-phase.p.rapidapi.com/basic?lat=' + lat + '&lon=' + long,)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log(data);
+        //         moonphase = data.phase_name;
+        //     });
+        moonphase = (getMoonPhaseName(calculateMoonPhase()));
+        console.log(moonphase);
 
-                // set phase variable based on what moonphase is
-                let phase;
-                switch (moonphase) {
-                    case 'New Moon':
-                        phase = 'new';
-                        break;
-                    case 'Waxing Crescent':
-                        phase = 'waxingcrescent';
-                        break;
-                    case 'First Quarter':
-                        phase = 'firstquarter';
-                        break;
-                    case 'Waxing Gibbous':
-                        phase = 'waxinggibbous';
-                        break;
-                    case 'Full Moon':
-                        phase = 'full';
-                        break;
-                    case 'Waning Gibbous':
-                        phase = 'waninggibbous';
-                        break;
-                    case 'Last Quarter':
-                        phase = 'thirdquarter';
-                        break;
-                    case 'Waning Crescent':
-                        phase = 'waningcrescent';
-                        break;
-                }
+        document.getElementById('moon-phase').innerHTML = moonphase;
 
-                // set image source path for #moon-icon
-                document.getElementById("pic1").src = "img/icon_moon_" + phase + ".svg";
-            });
+        // set phase variable based on what moonphase is
+        let phase;
+        switch (moonphase) {
+            case 'New Moon':
+                phase = 'new';
+                break;
+            case 'Waxing Crescent':
+                phase = 'waxingcrescent';
+                break;
+            case 'First Quarter':
+                phase = 'firstquarter';
+                break;
+            case 'Waxing Gibbous':
+                phase = 'waxinggibbous';
+                break;
+            case 'Full Moon':
+                phase = 'full';
+                break;
+            case 'Waning Gibbous':
+                phase = 'waninggibbous';
+                break;
+            case 'Last Quarter':
+                phase = 'thirdquarter';
+                break;
+            case 'Waning Crescent':
+                phase = 'waningcrescent';
+                break;
+        }
+
+        // set image source path for #moon-icon
+        document.getElementById("moon-icon").src = "img/icon_moon_" + phase + ".svg";
     }
 
     // function getDetails() {
