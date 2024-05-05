@@ -1,18 +1,25 @@
+// Declare some global variables
+let lat;
+let long;
+let city;
+let sunrise;
+let sunset;
+let moonphase;
+let position;
+
 // On load
 window.addEventListener('load', function () {
 
-    // Declare some global variables
-    let lat;
-    let long;
-    let city;
-    let sunrise;
-    let sunset;
-    let moonphase;
-
     // Get the user's location
 
-    const successCallback = (position) => {
+    const successCallback = (pos) => {
+        position = pos; // set global position variable
         console.log(position);
+        latLong(); // Call function to set lat and long
+        getCity(); // Call function to get city name
+        setDateAndTime(); // Call function to set date and time
+        getSunriseSunset(); // Call function to get sunrise and sunset times
+        getMoonPhase(); // Call function to get moon phase
     };
 
     const errorCallback = (error) => {
@@ -104,28 +111,58 @@ window.addEventListener('load', function () {
     //     document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
     // }, 1000);
 
+
 });
 
-function getDetails() {
+function latLong() {
     // Set lat and long from geolocation
+    console.log("setting latitude and longitude");
     lat = position.coords.latitude;
     long = position.coords.longitude;
-
-    // Set innerHTML for the various details
-    document.getElementById('city').innerHTML = city;
+    console.log(lat, long);
     document.getElementById('latlong').innerHTML = lat + ', ' + long;
-    document.getElementById('date').innerHTML = date;
+}
 
-    // set "digitaltime", innerHTML to time in the format hh:mm:ss
-    document.getElementById('digitaltime').innerHTML = time;
+// Get city name from lat and long
+function getCity() {
+    console.log("setting city name");
+    fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + long + '&localityLanguage=en')
+        .then(response => response.json())
+        .then(data => {
+            city = data.city;
+            console.log(city);
+            document.getElementById('city').innerHTML = city;
+        });
+}
 
+// Set date and time
+function setDateAndTime() {
+}
 
-    // set "sunrise" and "sunset" innerHTML to sunrise and sunset
-    document.getElementById('sunrise').innerHTML = sunrise;
-    document.getElementById('sunset').innerHTML = sunset;
+// Get sunrise and sunset times
+function getSunriseSunset() {
+    console.log("getting sunrise and sunset times");
+    fetch('https://api.sunrise-sunset.org/json?lat=' + lat + '&lng=' + long + '&formatted=0')
+        .then(response => response.json())
+        .then(data => {
+            sunrise = data.results.sunrise;
+            sunset = data.results.sunset;
+            console.log(sunrise, sunset);
+            document.getElementById('sunrise').innerHTML = sunrise;
+            document.getElementById('sunset').innerHTML = sunset;
+        });
+}
 
-    // set "moonphase" innerHTML to moonphase
-    document.getElementById('moonphase').innerHTML = moonphase;
+// Get moon phase
+function getMoonPhase() {
+    console.log("getting moon phase");
+    fetch('https://api.farmsense.net/v1/moonphases/?d=' + new Date().toISOString().slice(0, 10))
+        .then(response => response.json())
+        .then(data => {
+            moonphase = data[0].Phase;
+            console.log(moonphase);
+            document.getElementById('moonphase').innerHTML = moonphase;
+        });
 
     // set phase variable based on what moonphase is
     let phase;
@@ -158,7 +195,56 @@ function getDetails() {
 
     // set image source path for #moon-icon
     document.getElementById("pic1").src = "img/icon_moon_" + phase + ".svg"
-
-
-    // city, long/lat, date, time, sunrise, sunset and moon phase
 }
+
+// function getDetails() {
+//     // Set innerHTML for the various details
+//     document.getElementById('city').innerHTML = city;
+//     document.getElementById('date').innerHTML = date;
+
+//     // set "digitaltime", innerHTML to time in the format hh:mm:ss
+//     document.getElementById('digitaltime').innerHTML = time;
+
+
+//     // set "sunrise" and "sunset" innerHTML to sunrise and sunset
+//     document.getElementById('sunrise').innerHTML = sunrise;
+//     document.getElementById('sunset').innerHTML = sunset;
+
+//     // set "moonphase" innerHTML to moonphase
+//     document.getElementById('moonphase').innerHTML = moonphase;
+
+//     // set phase variable based on what moonphase is
+//     let phase;
+//     switch (moonphase) {
+//         case 'New Moon':
+//             phase = 'new';
+//             break;
+//         case 'Waxing Crescent':
+//             phase = 'waxingcrescent';
+//             break;
+//         case 'First Quarter':
+//             phase = 'firstquarter';
+//             break;
+//         case 'Waxing Gibbous':
+//             phase = 'waxinggibbous';
+//             break;
+//         case 'Full Moon':
+//             phase = 'full';
+//             break;
+//         case 'Waning Gibbous':
+//             phase = 'waninggibbous';
+//             break;
+//         case 'Last Quarter':
+//             phase = 'thirdquarter';
+//             break;
+//         case 'Waning Crescent':
+//             phase = 'waningcrescent';
+//             break;
+//     }
+
+//     // set image source path for #moon-icon
+//     document.getElementById("pic1").src = "img/icon_moon_" + phase + ".svg"
+
+
+//     // city, long/lat, date, time, sunrise, sunset and moon phase
+// }
