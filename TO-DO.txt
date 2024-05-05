@@ -1,5 +1,5 @@
 - Connect to suncalc or some other library/API that can do sunrise/sunset/moonphase
+    - Current sunrise/sunset/moonrise appear inaccurate—should be fixed by switching source
 - Get timezone to show up
 - Speed up performance
-- Allow users to enter/select a location
-- 
+- Allow users to enter/select a location of their choice, not just where they are right now
