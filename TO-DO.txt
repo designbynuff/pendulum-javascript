@@ -1,0 +1,5 @@
+- Connect to suncalc or some other library/API that can do sunrise/sunset/moonphase
+- Get timezone to show up
+- Speed up performance
+- Allow users to enter/select a location
+- 
