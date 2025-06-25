@@ -65,16 +65,39 @@ window.addEventListener('load', function () {
     getMoonPhase(); // Call function to get moon phase
 
     // Automatically update the time every second
-    // setInterval(function () {
-    //     let currentTime = new Date();
-    //     let hour = currentTime.getHours();
-    //     let minute = currentTime.getMinutes();
-    //     if (hour > 12) {
-    //         hour = hour % 12;
-    //     }
-    //     const timeInWords = timeToWords(hour, minute);
-    //     document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
-    // }, 1000);
+    setInterval(function () {
+        let currentTime = new Date();
+        let hour = currentTime.getHours();
+        let minute = currentTime.getMinutes();
+        let second = currentTime.getSeconds();
+
+        // Update seconds display
+        if (second < 10) {
+            second = '0' + second;
+        }
+
+        // Update digital time display
+        let displayHour = hour;
+        if (hour > 12) {
+            displayHour = hour % 12;
+        }
+        if (displayHour === 0) {
+            displayHour = 12;
+        }
+
+        document.getElementById('digitaltime').innerHTML = displayHour + ':' +
+            (minute < 10 ? '0' + minute : minute) + ':' + second;
+
+        // Update time in words
+        if (hour > 12) {
+            hour = hour % 12;
+        }
+        if (hour === 0) {
+            hour = 12;
+        }
+        const timeInWords = timeToWords(hour, minute);
+        document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
+    }, 1000);
 
 
     // Function to convert a number to words
