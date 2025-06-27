@@ -2,4 +2,23 @@
     - Current sunrise/sunset/moonrise appear inaccurate—should be fixed by switching source
 - Get timezone to show up
 - Speed up performance
-- Allow users to enter/select a location of their choice, not just where they are right now
+    - Improve geolocation
+        - Speed
+        - Timeout/failure handling
+        - Permissions request on all devices
+        - Error handling
+- Allow users to enter/select a location of their choice, not just where they are right now?
+- Reduce number of decimals for lat/long
+- Evolving gradient background
+    - Light/dark icons according to what bg is displayed
+    - Get sunrise, sunset
+    - Solar noon right in the middle
+    - Add "solar midnight", midpoint between sunset and sunrise
+    - Add dawn (midpoint of midnight and sunrise) and dusk (midpoint of sunset and midnight)
+    - Define gradients for these 6 points then interpolate between them
+    - Render gradients with OKLCH (https://css-tricks.com/almanac/functions/o/oklch/)
+    - Add "cloudy" mode (desaturated, dull gradients)?
+- Fix language issues in word time:
+    - Some messy stuff around "thirteen", 
+    - make sure noon/midnight appear when grammatically correct and revert to "twelve" otherwise
+- Improve moon phase calculation (there are precise algos for that)

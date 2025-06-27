@@ -15,20 +15,74 @@ window.addEventListener('load', function () {
     let position;
 
     // Get the user's location
+    function initializeLocation() {
+        // Show loading state
+        document.getElementById('latlong').innerHTML = 'Getting location...';
+        document.getElementById('city').innerHTML = 'Getting city...';
 
-    const successCallback = (pos) => {
-        position = pos; // set global position variable
-        console.log(position);
-        latLong(); // Call function to set lat and long
-        getCity(); // Call function to get city name
-    };
+        // Check if geolocation is supported
+        if (!navigator.geolocation) {
+            handleLocationError('Geolocation is not supported by this browser');
+            return;
+        }
 
-    const errorCallback = (error) => {
-        console.log(error);
-    };
+        // Geolocation options
+        const options = {
+            enableHighAccuracy: true,  // Try to get the most accurate position
+            timeout: 10000,           // 10 second timeout
+            maximumAge: 300000        // Cache position for 5 minutes
+        };
 
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+        const successCallback = (pos) => {
+            position = pos; // set global position variable
+            console.log('Location obtained:', position);
+            latLong(); // Call function to set lat and long
+            getCity(); // Call function to get city name
+            getSunriseSunset(); // Call function to get sunrise and sunset times
+        };
 
+        const errorCallback = (error) => {
+            console.log('Geolocation error:', error);
+            handleLocationError(error);
+        };
+
+        navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+    }
+
+    function handleLocationError(error) {
+        let errorMessage = 'Unable to get location';
+
+        if (error.code) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'Location access denied. Please enable location services.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Location information unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'Location request timed out.';
+                    break;
+                default:
+                    errorMessage = 'An unknown error occurred.';
+                    break;
+            }
+        }
+
+        console.log('Location error:', errorMessage);
+        document.getElementById('latlong').innerHTML = errorMessage;
+        document.getElementById('city').innerHTML = 'Location unavailable';
+
+        // Set default coordinates (you can change these to a default location)
+        lat = 40.7128; // Default to NYC coordinates
+        long = -74.0060;
+
+        // Still try to get sunrise/sunset with default coordinates
+        getSunriseSunset();
+    }
+
+    // Initialize location
+    initializeLocation();
 
     // Get the current time
     let currentTime = new Date();
@@ -61,7 +115,6 @@ window.addEventListener('load', function () {
     document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
 
     setDateAndTime(); // Call function to set date and time
-    getSunriseSunset(); // Call function to get sunrise and sunset times
     getMoonPhase(); // Call function to get moon phase
 
     // Automatically update the time every second
@@ -160,12 +213,23 @@ window.addEventListener('load', function () {
     // Get city name from lat and long
     function getCity() {
         console.log("setting city name");
+        document.getElementById('city').innerHTML = 'Getting city...';
+
         fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + long + '&localityLanguage=en')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 city = data.city;
-                console.log(city);
+                console.log('City obtained:', city);
                 document.getElementById('city').innerHTML = city;
+            })
+            .catch(error => {
+                console.log('Error getting city:', error);
+                document.getElementById('city').innerHTML = 'City unavailable';
             });
     }
 
@@ -197,20 +261,32 @@ window.addEventListener('load', function () {
     // Get sunrise and sunset times
     function getSunriseSunset() {
         console.log("getting sunrise and sunset times");
+        document.getElementById('sunrise').innerHTML = 'Getting sunrise...';
+        document.getElementById('sunset').innerHTML = 'Getting sunset...';
+
         fetch('https://api.sunrise-sunset.org/json?lat=' + lat + '&lng=' + long + '&formatted=0')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 sunrise = data.results.sunrise;
                 sunset = data.results.sunset;
-                console.log(sunrise, sunset);
+                console.log('Sunrise/sunset obtained:', sunrise, sunset);
 
                 // Format sunrise and sunset times
                 sunrise = sunrise.slice(11, 16);
                 sunset = sunset.slice(11, 16);
 
-
                 document.getElementById('sunrise').innerHTML = sunrise;
                 document.getElementById('sunset').innerHTML = sunset;
+            })
+            .catch(error => {
+                console.log('Error getting sunrise/sunset:', error);
+                document.getElementById('sunrise').innerHTML = 'Sunrise unavailable';
+                document.getElementById('sunset').innerHTML = 'Sunset unavailable';
             });
     }
 

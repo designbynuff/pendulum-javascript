@@ -1,13 +1,28 @@
+/* Serving Jaune */
+/* Providing both Midi and Maxi, only using Midi for now. Woff as fallback for browsers that don't support woff2. */
+/* font-weight: 1 999 allows for variable font. */
+/* font-display: swap is a performance optimization. */
+@font-face {
+    font-family: 'NaN Jaune Midi';
+    src: url('./fonts/NaNJaune-Midi-Var.woff2') format('woff2'),
+        url('./fonts/NaNJaune-Midi-Var.woff') format('woff');
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'NaN Jaune Maxi';
+    src: url('./fonts/NaNJauneMaxi-Var.woff2') format('woff2'),
+        url('./fonts/NaNJauneMaxi-Var.woff') format('woff');
+    font-weight: 1 999;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
     background-color: #1b1c21;
     color: #bfd0fc;
     font-family: 'space mono', monospace;
-}
-
-/* Serving Jaune */
-@font-face {
-    font-family: 'NaN Jaune';
-    src: url('./fonts/NaNJaune-Midi-Var.woff2');
 }
 
 /* .main {
@@ -15,7 +30,7 @@ body {
 } */
 
 #time {
-    font-family: 'NaN Jaune', sans-serif;
+    font-family: 'NaN Jaune Midi', sans-serif;
     font-size: 12vw;
     text-transform: uppercase;
     font-weight: 800;
