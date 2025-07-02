@@ -1,3 +1,6 @@
+// Import lunarphase-js
+import { Hemisphere, Moon } from "lunarphase-js";
+
 // On load
 window.addEventListener('load', function () {
 
@@ -11,7 +14,7 @@ window.addEventListener('load', function () {
     let numSecond;
     // Sun position times
     let sunrise, sunset, dawn, dusk, solarNoon, solarMidnight, nextSunrise;
-    
+
     let moonphase;
     let position;
 
@@ -199,25 +202,25 @@ window.addEventListener('load', function () {
     function getSunriseSunset() {
         console.log("getting sunrise and sunset times");
         fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}`)
-        .then(response => response.json())
-        .then(data => {
-            sunrise = data.results.sunrise;
-            sunset = data.results.sunset;
-            dawn = data.results.dawn;
-            dusk = data.results.dusk;
-            solarNoon = data.results.solar_noon;
-
-            // Getting Tomorrow's Sunrise Requires a different API call
-            fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&date=tomorrow`)
             .then(response => response.json())
             .then(data => {
-                nextSunrise = data.results.sunrise;
-            });
+                sunrise = data.results.sunrise;
+                sunset = data.results.sunset;
+                dawn = data.results.dawn;
+                dusk = data.results.dusk;
+                solarNoon = data.results.solar_noon;
 
-            // Calculate solar midnight as midpoint between today's sunset and tomorrow's sunrise
-            solarMidnight = new Date((new Date(nextSunrise).getTime() + new Date(sunset).getTime()) / 2);
+                // Getting Tomorrow's Sunrise Requires a different API call
+                fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&date=tomorrow`)
+                    .then(response => response.json())
+                    .then(data => {
+                        nextSunrise = data.results.sunrise;
+                    });
 
-            console.log(sunrise, sunset, dawn, dusk, solarNoon, solarMidnight, nextSunrise);
+                // Calculate solar midnight as midpoint between today's sunset and tomorrow's sunrise
+                solarMidnight = new Date((new Date(nextSunrise).getTime() + new Date(sunset).getTime()) / 2);
+
+                console.log(sunrise, sunset, dawn, dusk, solarNoon, solarMidnight, nextSunrise);
 
                 // Format sunrise and sunset times
                 sunrise = sunrise.slice(11, 16);
@@ -230,120 +233,79 @@ window.addEventListener('load', function () {
 
     }
 
-    // NOT WORKING, NEED API OR NEW CALCULATION CODE Calculate moon phase based on daten
-    function calculateMoonPhase() {
-        let year = currentTime.getFullYear();
-        let month = currentTime.getMonth() + 1;
-        let day = currentTime.getDate();
-        let c, e, jd;
-        if (month < 3) {
-            year--;
-            month += 12;
-        }
-        month += 1;
-        c = 365.25 * year;
-        e = 30.6 * month;
-        jd = c + e + day - 694039.09;
-        jd /= 29.5305882;
-        jd = parseInt(jd);
-        jd = jd % 8;
-        return jd;
-    }
-
-    // Turn moon phase number into a string
-    function getMoonPhaseName(phase) {
-        let moonPhase;
-        switch (phase) {
-            case 0:
-                moonPhase = 'New Moon';
-                break;
-            case 1:
-                moonPhase = 'Waxing Crescent';
-                break;
-            case 2:
-                moonPhase = 'First Quarter';
-                break;
-            case 3:
-                moonPhase = 'Waxing Gibbous';
-                break;
-            case 4:
-                moonPhase = 'Full Moon';
-                break;
-            case 5:
-                moonPhase = 'Waning Gibbous';
-                break;
-            case 6:
-                moonPhase = 'Last Quarter';
-                break;
-            case 7:
-                moonPhase = 'Waning Crescent';
-                break;
-        }
-        return moonPhase;
-    }
-
-    // Get moon phase
+    //  Get moon phase with lunarphase-js
     function getMoonPhase() {
         console.log("getting moon phase");
-        // fetch('https://moon-phase.p.rapidapi.com/basic?lat=' + lat + '&lon=' + long,)
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log(data);
-        //         moonphase = data.phase_name;
-        //     });
-        moonphase = (getMoonPhaseName(calculateMoonPhase()));
-        console.log(moonphase);
-
-        document.getElementById('moon-phase').innerHTML = moonphase;
-
-        // set phase variable based on what moonphase is
-        let phase;
-        switch (moonphase) {
-            case 'New Moon':
-                phase = 'new';
-                break;
-            case 'Waxing Crescent':
-                phase = 'waxingcrescent';
-                break;
-            case 'First Quarter':
-                phase = 'firstquarter';
-                break;
-            case 'Waxing Gibbous':
-                phase = 'waxinggibbous';
-                break;
-            case 'Full Moon':
-                phase = 'full';
-                break;
-            case 'Waning Gibbous':
-                phase = 'waninggibbous';
-                break;
-            case 'Last Quarter':
-                phase = 'thirdquarter';
-                break;
-            case 'Waning Crescent':
-                phase = 'waningcrescent';
-                break;
-        }
-
-        // set image source path for #moon-icon
-        document.getElementById("moon-icon").src = "img/icon_moon_" + phase + ".svg";
+        const moonPhase = new Moon(lat, long);
+        console.log(moonPhase);
+        document.getElementById('moon-phase').innerHTML = moonPhase;
     }
 
-    // function getDetails() {
-    //     // Set innerHTML for the various details
-    //     document.getElementById('city').innerHTML = city;
-    //     document.getElementById('date').innerHTML = date;
+    // NOT WORKING, NEED API OR NEW CALCULATION CODE Calculate moon phase based on daten
+    // function calculateMoonPhase() {
+    //     let year = currentTime.getFullYear();
+    //     let month = currentTime.getMonth() + 1;
+    //     let day = currentTime.getDate();
+    //     let c, e, jd;
+    //     if (month < 3) {
+    //         year--;
+    //         month += 12;
+    //     }
+    //     month += 1;
+    //     c = 365.25 * year;
+    //     e = 30.6 * month;
+    //     jd = c + e + day - 694039.09;
+    //     jd /= 29.5305882;
+    //     jd = parseInt(jd);
+    //     jd = jd % 8;
+    //     return jd;
+    // }
 
-    //     // set "digitaltime", innerHTML to time in the format hh:mm:ss
-    //     document.getElementById('digitaltime').innerHTML = time;
+    // // Turn moon phase number into a string
+    // function getMoonPhaseName(phase) {
+    //     let moonPhase;
+    //     switch (phase) {
+    //         case 0:
+    //             moonPhase = 'New Moon';
+    //             break;
+    //         case 1:
+    //             moonPhase = 'Waxing Crescent';
+    //             break;
+    //         case 2:
+    //             moonPhase = 'First Quarter';
+    //             break;
+    //         case 3:
+    //             moonPhase = 'Waxing Gibbous';
+    //             break;
+    //         case 4:
+    //             moonPhase = 'Full Moon';
+    //             break;
+    //         case 5:
+    //             moonPhase = 'Waning Gibbous';
+    //             break;
+    //         case 6:
+    //             moonPhase = 'Last Quarter';
+    //             break;
+    //         case 7:
+    //             moonPhase = 'Waning Crescent';
+    //             break;
+    //     }
+    //     return moonPhase;
+    // }
 
+    // // Get moon phase
+    // function getMoonPhase() {
+    //     console.log("getting moon phase");
+    //     // fetch('https://moon-phase.p.rapidapi.com/basic?lat=' + lat + '&lon=' + long,)
+    //     //     .then(response => response.json())
+    //     //     .then(data => {
+    //     //         console.log(data);
+    //     //         moonphase = data.phase_name;
+    //     //     });
+    //     moonphase = (getMoonPhaseName(calculateMoonPhase()));
+    //     console.log(moonphase);
 
-    //     // set "sunrise" and "sunset" innerHTML to sunrise and sunset
-    //     document.getElementById('sunrise').innerHTML = sunrise;
-    //     document.getElementById('sunset').innerHTML = sunset;
-
-    //     // set "moonphase" innerHTML to moonphase
-    //     document.getElementById('moonphase').innerHTML = moonphase;
+    //     document.getElementById('moon-phase').innerHTML = moonphase;
 
     //     // set phase variable based on what moonphase is
     //     let phase;
@@ -375,10 +337,9 @@ window.addEventListener('load', function () {
     //     }
 
     //     // set image source path for #moon-icon
-    //     document.getElementById("pic1").src = "img/icon_moon_" + phase + ".svg"
-
-
-    //     // city, long/lat, date, time, sunrise, sunset and moon phase
+    //     document.getElementById("moon-icon").src = "img/icon_moon_" + phase + ".svg";
     // }
+
+
 });
 
