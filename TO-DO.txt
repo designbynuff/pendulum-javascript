@@ -22,3 +22,7 @@
     - Some messy stuff around "thirteen", 
     - make sure noon/midnight appear when grammatically correct and revert to "twelve" otherwise
 - Improve moon phase calculation (there are precise algos for that)
+- Link to SunriseSunset.io (required for free API)
+    - Possibly on about page?
+- Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.
+    - Brutalism mode switch?
