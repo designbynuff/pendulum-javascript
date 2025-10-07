@@ -1,92 +1,13 @@
-/* Serving Jaune */
-/* Providing both Midi and Maxi, only using Midi for now. Woff as fallback for browsers that don't support woff2. */
-/* font-weight: 1 999 allows for variable font. */
-/* font-display: swap is a performance optimization. */
-@font-face {
-    font-family: 'NaN Jaune Midi';
-    src: url('./fonts/NaNJaune-Midi-Var.woff2') format('woff2'),
-        url('./fonts/NaNJaune-Midi-Var.woff') format('woff');
-    font-style: normal;
-}
-
-
-@font-face {
-    font-family: 'NaN Jaune Maxi';
-    src: url('./fonts/NaNJauneMaxi-Var.woff2') format('woff2'),
-        url('./fonts/NaNJauneMaxi-Var.woff') format('woff');
-    font-weight: 1 999;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* Colour Variables */
-:root {
-    --nuff-light: #bfd0fc;
-    --nuff-dark: #1b1c21;
-}
-
-/* Font Variables */
-:root {
-    --font-mono: 'space mono', monospace;
-    --font-display: 'NaN Jaune Midi', sans-serif;
-}
-
 body {
-    background-color: var(--nuff-dark);
-    color: var(--nuff-light);
-    font-family: var(--font-mono);
-}
-
-.hidden {
-    display: none !important;
-}
-
-#location-consent {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.button-row {
-    display: flex;
-    gap: 1rem;
-}
-
-button {
-    padding: 0.5rem 1rem;
-    border-radius: 100rem;
-    font-family: var(--font-mono);
-    border: none;
-}
-
-button.primary {
-    background-color: var(--nuff-light);
-    color: var(--nuff-dark);
-}
-
-button.primary:hover,
-button.primary:focus {
-    background-color: rgba(191, 208, 252, 0.9);
-    cursor: pointer;
-}
-
-button.outline {
-    background-color: transparent;
+    background-color: #1b1c21;
     color: #bfd0fc;
-    border: 1px solid var(--nuff-light);
+    font-family: 'space mono', monospace;
 }
 
-button.outline:hover,
-button.outline:focus {
-    background-color: rgba(191, 208, 252, 0.2);
-    color: var(--nuff-light);
-    cursor: pointer;
+/* Serving Jaune */
+@font-face {
+    font-family: 'NaN Jaune';
+    src: url('./fonts/NaNJaune-Midi-Var.woff2');
 }
 
 /* .main {
@@ -94,7 +15,7 @@ button.outline:focus {
 } */
 
 #time {
-    font-family: var(--font-display);
+    font-family: 'NaN Jaune', sans-serif;
     font-size: 12vw;
     text-transform: uppercase;
     font-weight: 800;
@@ -112,7 +33,7 @@ button.outline:focus {
 }
 
 .footer p {
-    font-family: var(--font-mono);
+    font-family: 'space mono';
     line-height: 0.75;
 }
 
@@ -136,7 +57,7 @@ a:focus {
     padding: 2rem 0;
 }
 
-/* .details {} */
+.details {}
 
 .detail {
     display: flex;

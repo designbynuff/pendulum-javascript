@@ -11,71 +11,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         rel="stylesheet">
-
-    <link rel="icon" type="image/x-icon" href="img/favicon.gif">
 </head>
 
 <body>
 
     <div class="container">
-        <!-- Consent UI (initially visible) -->
-        <div id="location-consent">
-            <h1>Words, for Pendulum.</h1>
-            <p>
-                This site needs your location to show accurate time and astronomical data.<br>
-                You can continue with a default location (New York City) or share your location.
-            </p>
-            <div class="button-row">
-                <button id="use-location" class="primary">Use My Location</button>
-                <button id="use-default" class="outline">Use Default Location (NYC)</button>
-            </div>
+        <div class="main" id="time">
         </div>
 
-        <div id="main-content" class="hidden">
-            <div class="main" id="time">
+        <!-- Display city, long/lat, date, time, sunrise, sunset and moon phase -->
+        <div class="secondary">
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_pin.svg" alt="pin" class="icon">
+                    <p class="info" id="city">[Paris]</p>
+                </div>
+                <div class="detail">
+                    <img src="img/icon_location.svg" alt="icon_location" class="icon">
+                    <p class="info" id="latlong">[48.856613, 2.352222]</p>
+                </div>
             </div>
-            <!-- Display city, long/lat, date, time, sunrise, sunset and moon phase -->
-            <div class="secondary">
-                <div class="details">
-                    <div class="detail">
-                        <img src="img/icon_pin.svg" alt="pin" class="icon">
-                        <p class="info" id="city">[loading...]</p>
-                    </div>
-                    <div class="detail">
-                        <img src="img/icon_location.svg" alt="icon_location" class="icon">
-                        <p class="info" id="latlong">[loading...]</p>
-                    </div>
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_calendar.svg" alt="date" class="icon">
+                    <p class="info" id="date">[Thu Mar 14, 2024]</p>
                 </div>
-                <div class="details">
-                    <div class="detail">
-                        <img src="img/icon_calendar.svg" alt="date" class="icon">
-                        <p class="info" id="date">[loading...]</p>
-                    </div>
-                    <div class="detail">
-                        <img src="img/icon_hourglass.svg" alt="time" class="icon">
-                        <p class="info" id="digitaltime">[loading...]</p>
-                    </div>
+                <div class="detail">
+                    <img src="img/icon_hourglass.svg" alt="time" class="icon">
+                    <p class="info" id="digitaltime">[12:12:08 CET]</p>
                 </div>
-                <div class="details">
-                    <div class="detail">
-                        <img src="img/icon_sunrise.svg" alt="sunrise" class="icon">
-                        <p class="info" id="sunrise">[loading...]</p>
-                    </div>
-                    <div class="detail">
-                        <img src="img/icon_sunset.svg" alt="sunset" class="icon">
-                        <p class="info" id="sunset">[loading...]</p>
-                    </div>
+            </div>
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_sunrise.svg" alt="sunrise" class="icon">
+                    <p class="info" id="sunrise">[08:08]</p>
                 </div>
-                <div class="details">
-                    <div class="detail">
-                        <img src="img/icon_moon_new.svg" alt="moon phase" id="moon-icon" class="icon">
-                        <p class="info" id="moon-phase">[New Moon]</p>
-                    </div>
-                    <div class="detail">
-                        <img src="img/icon_nuff.svg" alt="nuff" class="icon">
-                        <p class="info">Made for <a href="https://www.fddrsn.net/teaching/time/">Time</a> by <a
-                                href="https://nuff.design">Nuff</a> </p>
-                    </div>
+                <div class="detail">
+                    <img src="img/icon_sunset.svg" alt="sunset" class="icon">
+                    <p class="info" id="sunset">[18:32]</p>
+                </div>
+            </div>
+            <div class="details">
+                <div class="detail">
+                    <img src="img/icon_moon_new.svg" alt="moon phase" id="moon-icon" class="icon">
+                    <p class="info" id="moon-phase">[New Moon]</p>
+                </div>
+                <div class="detail">
+                    <img src="img/icon_nuff.svg" alt="nuff" class="icon">
+                    <p class="info">Made for <a href="https://www.fddrsn.net/teaching/time/">Time</a> by <a
+                            href="https://nuff.design">Nuff</a> </p>
                 </div>
             </div>
         </div>
@@ -89,7 +73,7 @@
         </div> -->
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
