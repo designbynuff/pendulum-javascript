@@ -26,3 +26,5 @@
     - Possibly on about page?
 - Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.
     - Brutalism mode switch?
+- Word handling for midnight—we can say "five to midnight" or "ten past midnight", right? We wouldn't necessarily do it for noon. So maybe a very edgy edge case?
+    - On this, I'd like to be able to control what time it is for testing/screenshot purposes.
