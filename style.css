@@ -80,9 +80,11 @@ body {
 }
 
 .toggle:hover,
-.toggle:focus {
-    background: rgba(191, 208, 252, 0.15);
+.toggle:focus-visible {
+    background: var(--nuff-light);
+    color: var(--nuff-dark);
 }
+
 
 button {
     padding: 0.5rem 1rem;

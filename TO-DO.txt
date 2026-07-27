@@ -5,9 +5,10 @@
 [x] - Improve geolocation
         [x] Timeout/failure handling
         [x] Permissions request on all devices
-        - Error handling
+        [] Error handling
+        [] Give user ability to re-trigger location permission request 
 - Allow users to enter/select a location of their choice, not just where they are right now?
-[x]] Reduce number of decimals for lat/long
+[x] Reduce number of decimals for lat/long
 [x] Evolving gradient background
     [x] Light/dark icons according to what bg is displayed
     [x] Get sunrise, sunset

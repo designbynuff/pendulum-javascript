@@ -93,7 +93,7 @@ function setGradientMode(enabled, now = new Date()) {
 
     const toggleButton = document.getElementById('gradient-toggle');
     if (toggleButton) {
-        toggleButton.textContent = enabled ? 'Gradients on' : 'Gradients off';
+        toggleButton.textContent = enabled ? 'Plain Mode' : 'Sky Mode';
         toggleButton.setAttribute('aria-pressed', String(enabled));
     }
 
