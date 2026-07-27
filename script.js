@@ -11,6 +11,13 @@ window.addEventListener('load', function () {
     document.getElementById('main-content').classList.add('hidden');
     document.getElementById('location-consent').classList.remove('hidden');
 
+    const gradientToggle = document.getElementById('gradient-toggle');
+    if (gradientToggle) {
+        gradientToggle.addEventListener('click', function () {
+            setGradientMode(!gradientEnabled);
+        });
+    }
+
     // event listeners for consent buttons
     document.getElementById('use-location').addEventListener('click', function () {
         // get the user's location
@@ -42,14 +49,15 @@ let sunriseTime, sunsetTime, dawnTime, duskTime, solarNoonTime, solarMidnightTim
 
 // let moonphase;
 let position;
+let gradientEnabled = true;
 
 const skyPhases = {
-    dawn: ['hsla(213, 67%, 30%, 1)', 'hsla(207, 79%, 46%, 1)'],
-    sunrise: ['hsla(255, 100%, 93%, 1)', 'hsla(202, 100%, 86%, 1)'],
-    solarNoon: ['hsla(193, 100%, 77%, 1)', 'hsla(197, 90%, 87%, 1)'],
-    sunset: ['hsla(208, 100%, 90%, 1)', 'hsla(351, 100%, 72%, 1)'],
-    dusk: ['hsla(242, 62%, 60%, 1)', 'hsla(255, 90%, 75%, 1)'],
-    solarMidnight: ['hsla(251, 99%, 17%, 1)', 'hsla(216, 100%, 29%, 1)']
+    dawn: ['oklch(39.82% 0.1068 255.38 / 1)', 'oklch(57.89% 0.1535 249.79 / 1)'],
+    sunrise: ['oklch(90.47% 0.0477 284.11 / 1)', 'oklch(90.85% 0.095 83.77 / 1)'],
+    solarNoon: ['oklch(87.32% 0.0955 217.8 / 1)', 'oklch(91.58% 0.0493 224.4 / 1)'],
+    sunset: ['oklch(91.24% 0.0453 245.26 / 1)', 'oklch(72.35% 0.1746 13.54 / 1)'],
+    dusk: ['oklch(53.73% 0.1904 279.24 / 1)', 'oklch(69.63% 0.1651 293.25 / 1)'],
+    solarMidnight: ['oklch(21.85% 0.1382 274.16 / 1)', 'oklch(38.52% 0.1566 259.93 / 1)']
 };
 
 // If user allows location access, use their location
@@ -80,15 +88,45 @@ function displayCoordinates(lat, long) {
     document.getElementById('latlong').textContent = formatCoordinate(lat) + ', ' + formatCoordinate(long);
 }
 
-function parseHsla(value) {
-    const match = value.match(/hsla\(\s*([0-9.]+)\s*,\s*([0-9.]+)%\s*,\s*([0-9.]+)%\s*,\s*([0-9.]+)\s*\)/i);
+function setGradientMode(enabled, now = new Date()) {
+    gradientEnabled = enabled;
+
+    const toggleButton = document.getElementById('gradient-toggle');
+    if (toggleButton) {
+        toggleButton.textContent = enabled ? 'Gradients: on' : 'Gradients: off';
+        toggleButton.setAttribute('aria-pressed', String(enabled));
+    }
+
+    if (!enabled) {
+        document.documentElement.style.setProperty('--text-color', '#bfd0fc');
+        document.documentElement.style.setProperty('--icon-filter', 'brightness(0) saturate(100%) invert(1)');
+        document.body.style.background = 'var(--nuff-dark)';
+        document.body.style.color = '#bfd0fc';
+        document.body.style.transition = 'background 0.8s ease, color 0.8s ease';
+        document.querySelectorAll('a').forEach((link) => {
+            link.style.color = '#bfd0fc';
+            link.style.borderBottomColor = '#bfd0fc';
+        });
+        return;
+    }
+
+    updateSkyGradient(now);
+}
+
+function parseOklch(value) {
+    const match = value.match(/oklch\(\s*([0-9.]+)(%)?\s+([0-9.]+)\s+([0-9.]+)(?:\s*\/\s*([0-9.]+))?\s*\)/i);
     if (!match) return null;
 
+    let lightness = Number(match[1]);
+    if (match[2]) {
+        lightness = lightness / 100;
+    }
+
     return {
-        h: Number(match[1]),
-        s: Number(match[2]),
-        l: Number(match[3]),
-        a: Number(match[4])
+        l: lightness,
+        c: Number(match[3]),
+        h: Number(match[4]),
+        a: Number(match[5] ?? 1)
     };
 }
 
@@ -96,21 +134,22 @@ function interpolateNumber(start, end, amount) {
     return start + (end - start) * amount;
 }
 
-function interpolateHsla(colorA, colorB, amount) {
-    const start = parseHsla(colorA);
-    const end = parseHsla(colorB);
+function interpolateOklch(colorA, colorB, amount) {
+    const start = parseOklch(colorA);
+    const end = parseOklch(colorB);
 
     if (!start || !end) return colorA;
 
-    const hue = start.h + ((end.h - start.h + 540) % 360 - 180) * amount;
-    const saturation = interpolateNumber(start.s, end.s, amount);
     const lightness = interpolateNumber(start.l, end.l, amount);
+    const chroma = interpolateNumber(start.c, end.c, amount);
+    const hue = start.h + ((end.h - start.h + 540) % 360 - 180) * amount;
     const alpha = interpolateNumber(start.a, end.a, amount);
 
-    return `hsla(${hue.toFixed(2)}, ${saturation.toFixed(2)}%, ${lightness.toFixed(2)}%, ${alpha.toFixed(2)})`;
+    return `oklch(${lightness.toFixed(3)} ${chroma.toFixed(3)} ${hue.toFixed(2)} / ${alpha.toFixed(2)})`;
 }
 
 function updateSkyGradient(now = new Date()) {
+    if (!gradientEnabled) return;
     if (!dawnTime || !sunriseTime || !solarNoonTime || !sunsetTime || !duskTime) return;
 
     const midnightStart = new Date(now);
@@ -146,17 +185,17 @@ function updateSkyGradient(now = new Date()) {
             const duration = next.date - current.date;
             const elapsed = now - current.date;
             const amount = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
-            const topColor = interpolateHsla(current.colors[0], next.colors[0], amount);
-            const bottomColor = interpolateHsla(current.colors[1], next.colors[1], amount);
+            const topColor = interpolateOklch(current.colors[0], next.colors[0], amount);
+            const bottomColor = interpolateOklch(current.colors[1], next.colors[1], amount);
             const gradient = `linear-gradient(135deg, ${topColor}, ${bottomColor})`;
 
             // Calculate average lightness for text contrast
-            const bottomLightness = parseHsla(bottomColor)?.l ?? 0;
-            const topLightness = parseHsla(topColor)?.l ?? 0;
+            const bottomLightness = parseOklch(bottomColor)?.l ?? 0;
+            const topLightness = parseOklch(topColor)?.l ?? 0;
             const averageLightness = (bottomLightness + topLightness) / 2;
 
             // Set text color based on average lightness
-            const textColor = averageLightness > 60 ? '#1b1c21' : '#bfd0fc';
+            const textColor = averageLightness > 0.6 ? '#1b1c21' : '#bfd0fc';
             const iconFilter = textColor === '#1b1c21'
                 ? 'brightness(0) saturate(100%)'
                 : 'brightness(0) saturate(100%) invert(1)';

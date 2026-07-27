@@ -15,12 +15,12 @@
     [x] Add "solar midnight", midpoint between sunset and next sunrise
     [x] Add dawn (midpoint of midnight and sunrise) and dusk (midpoint of sunset and midnight)
     [x] Define gradients for these 6 points then interpolate between them
-    - Render gradients with OKLCH (https://css-tricks.com/almanac/functions/o/oklch/)
+    [x] Render gradients with OKLCH (https://css-tricks.com/almanac/functions/o/oklch/)
     - Add "cloudy" mode (desaturated, dull gradients)?
 - Fix language issues in word time:
     - Some messy stuff around "thirteen", 
     - make sure noon/midnight appear when grammatically correct and revert to "twelve" otherwise
-- Improve moon phase calculation (there are precise algos for that)
+[x] Improve moon phase calculation (there are precise algos for that)
 - Link to SunriseSunset.io (required for free API)
     - Possibly on about page?
 - Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.

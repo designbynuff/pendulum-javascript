@@ -60,6 +60,30 @@ body {
     gap: 1rem;
 }
 
+.mode-toggle-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.toggle {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--text-color);
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.toggle:hover,
+.toggle:focus {
+    background: rgba(191, 208, 252, 0.15);
+}
+
 button {
     padding: 0.5rem 1rem;
     border-radius: 100rem;
