@@ -1,21 +1,20 @@
-- Connect to suncalc or some other library/API that can do sunrise/sunset/moonphase
-    - Current sunrise/sunset/moonrise appear inaccurate—should be fixed by switching source
+[x] Connect to suncalc or some other library/API that can do sunrise/sunset/moonphase
+    [x] Current sunrise/sunset/moonrise appear inaccurate—should be fixed by switching source
 - Get timezone to show up
-- Speed up performance
-    - Improve geolocation
-        - Speed
-        - Timeout/failure handling
-        - Permissions request on all devices
+[x] Speed up performance
+[x] - Improve geolocation
+        [x] Timeout/failure handling
+        [x] Permissions request on all devices
         - Error handling
 - Allow users to enter/select a location of their choice, not just where they are right now?
-- Reduce number of decimals for lat/long
-- Evolving gradient background
-    - Light/dark icons according to what bg is displayed
-    - Get sunrise, sunset
-    - Solar noon right in the middle
-    - Add "solar midnight", midpoint between sunset and sunrise
-    - Add dawn (midpoint of midnight and sunrise) and dusk (midpoint of sunset and midnight)
-    - Define gradients for these 6 points then interpolate between them
+[x]] Reduce number of decimals for lat/long
+[x] Evolving gradient background
+    [x] Light/dark icons according to what bg is displayed
+    [x] Get sunrise, sunset
+    [x] Solar noon right in the middle
+    [x] Add "solar midnight", midpoint between sunset and next sunrise
+    [x] Add dawn (midpoint of midnight and sunrise) and dusk (midpoint of sunset and midnight)
+    [x] Define gradients for these 6 points then interpolate between them
     - Render gradients with OKLCH (https://css-tricks.com/almanac/functions/o/oklch/)
     - Add "cloudy" mode (desaturated, dull gradients)?
 - Fix language issues in word time:
@@ -28,3 +27,4 @@
     - Brutalism mode switch?
 - Word handling for midnight—we can say "five to midnight" or "ten past midnight", right? We wouldn't necessarily do it for noon. So maybe a very edgy edge case?
     - On this, I'd like to be able to control what time it is for testing/screenshot purposes.
+- Add a setInterval so it auto-updates?

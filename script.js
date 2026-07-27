@@ -1,6 +1,6 @@
 // Import lunarphase-js
 // import { Hemisphere, Moon } from "lunarphase-js";
-import { Hemisphere, Moon } from "./node_modules/lunarphase-js/dist/index.es.js";
+import { Moon } from "./node_modules/lunarphase-js/dist/index.es.js";
 
 // Default lat/long for NYC—used as fallback if user doesn't allow location access
 const defaultLat = 40.7128;
@@ -38,10 +38,19 @@ let numHour;
 let numMinute;
 let numSecond;
 // Sun position times
-let sunrise, sunset, dawn, dusk, solarNoon, solarMidnight, nextSunrise;
+let sunriseTime, sunsetTime, dawnTime, duskTime, solarNoonTime, solarMidnightTime, nextSunriseTime;
 
 // let moonphase;
 let position;
+
+const skyPhases = {
+    dawn: ['hsla(213, 67%, 30%, 1)', 'hsla(207, 79%, 46%, 1)'],
+    sunrise: ['hsla(255, 100%, 93%, 1)', 'hsla(202, 100%, 86%, 1)'],
+    solarNoon: ['hsla(193, 100%, 77%, 1)', 'hsla(197, 90%, 87%, 1)'],
+    sunset: ['hsla(208, 100%, 90%, 1)', 'hsla(351, 100%, 72%, 1)'],
+    dusk: ['hsla(242, 62%, 60%, 1)', 'hsla(255, 90%, 75%, 1)'],
+    solarMidnight: ['hsla(251, 99%, 17%, 1)', 'hsla(216, 100%, 29%, 1)']
+};
 
 // If user allows location access, use their location
 const successCallback = (pos) => {
@@ -63,90 +72,171 @@ const errorCallback = (error) => {
     startApp(defaultLat, defaultLong);
 };
 
+function formatCoordinate(value) {
+    return Number(value).toFixed(3);
+}
+
+function displayCoordinates(lat, long) {
+    document.getElementById('latlong').textContent = formatCoordinate(lat) + ', ' + formatCoordinate(long);
+}
+
+function parseHsla(value) {
+    const match = value.match(/hsla\(\s*([0-9.]+)\s*,\s*([0-9.]+)%\s*,\s*([0-9.]+)%\s*,\s*([0-9.]+)\s*\)/i);
+    if (!match) return null;
+
+    return {
+        h: Number(match[1]),
+        s: Number(match[2]),
+        l: Number(match[3]),
+        a: Number(match[4])
+    };
+}
+
+function interpolateNumber(start, end, amount) {
+    return start + (end - start) * amount;
+}
+
+function interpolateHsla(colorA, colorB, amount) {
+    const start = parseHsla(colorA);
+    const end = parseHsla(colorB);
+
+    if (!start || !end) return colorA;
+
+    const hue = start.h + ((end.h - start.h + 540) % 360 - 180) * amount;
+    const saturation = interpolateNumber(start.s, end.s, amount);
+    const lightness = interpolateNumber(start.l, end.l, amount);
+    const alpha = interpolateNumber(start.a, end.a, amount);
+
+    return `hsla(${hue.toFixed(2)}, ${saturation.toFixed(2)}%, ${lightness.toFixed(2)}%, ${alpha.toFixed(2)})`;
+}
+
+function updateSkyGradient(now = new Date()) {
+    if (!dawnTime || !sunriseTime || !solarNoonTime || !sunsetTime || !duskTime) return;
+
+    const midnightStart = new Date(now);
+    midnightStart.setHours(0, 0, 0, 0);
+
+    const nextMidnight = new Date(midnightStart);
+    nextMidnight.setDate(nextMidnight.getDate() + 1);
+
+    const phasePoints = [
+        { date: midnightStart, colors: skyPhases.solarMidnight },
+        { date: dawnTime, colors: skyPhases.dawn },
+        { date: sunriseTime, colors: skyPhases.sunrise },
+        { date: solarNoonTime, colors: skyPhases.solarNoon },
+        { date: sunsetTime, colors: skyPhases.sunset },
+        { date: duskTime, colors: skyPhases.dusk },
+        { date: nextMidnight, colors: skyPhases.solarMidnight }
+    ];
+
+    if (solarMidnightTime) {
+        const insertIndex = phasePoints.findIndex((point) => point.date > solarMidnightTime);
+        if (insertIndex === -1) {
+            phasePoints.splice(phasePoints.length - 1, 0, { date: solarMidnightTime, colors: skyPhases.solarMidnight });
+        } else {
+            phasePoints.splice(insertIndex, 0, { date: solarMidnightTime, colors: skyPhases.solarMidnight });
+        }
+    }
+
+    for (let index = 0; index < phasePoints.length - 1; index += 1) {
+        const current = phasePoints[index];
+        const next = phasePoints[index + 1];
+
+        if (now >= current.date && now <= next.date) {
+            const duration = next.date - current.date;
+            const elapsed = now - current.date;
+            const amount = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
+            const topColor = interpolateHsla(current.colors[0], next.colors[0], amount);
+            const bottomColor = interpolateHsla(current.colors[1], next.colors[1], amount);
+            const gradient = `linear-gradient(135deg, ${topColor}, ${bottomColor})`;
+
+            // Calculate average lightness for text contrast
+            const bottomLightness = parseHsla(bottomColor)?.l ?? 0;
+            const topLightness = parseHsla(topColor)?.l ?? 0;
+            const averageLightness = (bottomLightness + topLightness) / 2;
+
+            // Set text color based on average lightness
+            const textColor = averageLightness > 60 ? '#1b1c21' : '#bfd0fc';
+            const iconFilter = textColor === '#1b1c21'
+                ? 'brightness(0) saturate(100%)'
+                : 'brightness(0) saturate(100%) invert(1)';
+
+            document.documentElement.style.setProperty('--bg-gradient', gradient);
+            document.documentElement.style.setProperty('--text-color', textColor);
+            document.documentElement.style.setProperty('--icon-filter', iconFilter);
+            document.body.style.background = gradient;
+            document.body.style.transition = 'background 0.8s ease, color 0.8s ease';
+            document.body.style.color = textColor;
+            document.querySelectorAll('a').forEach((link) => {
+                link.style.color = textColor;
+                link.style.borderBottomColor = textColor;
+            });
+            break;
+        }
+    }
+}
+
 // Start the app
 function startApp(lat, long) {
     // Hide consent UI and show main content
     document.getElementById('location-consent').classList.add('hidden');
     document.getElementById('main-content').classList.remove('hidden');
 
+    displayCoordinates(lat, long);
+
     // Now run your main logic with the chosen coordinates
     setDateAndTime();
     getSunriseSunset(lat, long);
     getMoonPhase(lat, long);
     getCity(lat, long);
+    startClock();
 }
 
-// navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+function startClock() {
+    let now = new Date();
+    let hour = now.getHours();
+    let minute = now.getMinutes();
 
-
-// Get the current time
-let currentTime = new Date();
-
-// Get the hour and minute components of the current time
-let hour = currentTime.getHours();
-let minute = currentTime.getMinutes();
-numHour = hour;
-numMinute = minute;
-numSecond = currentTime.getSeconds();
-
-// make seconds always two digits
-if (numSecond < 10) {
-    numSecond = '0' + numSecond;
-}
-
-// turn hour in to 12 hour format
-if (hour > 12) {
-    hour = hour % 12;
-    console.log(hour);
-}
-
-
-// Translate the current time into words
-const timeInWords = timeToWords(hour, minute);
-
-console.log(timeInWords);
-
-// add the time in words to the div with the id "time"
-document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
-
-// setDateAndTime(); // Call function to set date and time
-// getSunriseSunset(); // Call function to get sunrise and sunset times
-// getMoonPhase(); // Call function to get moon phase
-
-// Once we have the time, we can automatically update it every second
-setInterval(function () {
-    let currentTime = new Date();
-    let hour = currentTime.getHours();
-    let minute = currentTime.getMinutes();
-    let second = currentTime.getSeconds();
-
-    // Update seconds display
-    if (second < 10) {
-        second = '0' + second;
-    }
-
-    // Update digital time display
-    let displayHour = hour;
-    if (hour > 12) {
-        displayHour = hour % 12;
-    }
-    if (displayHour === 0) {
-        displayHour = 12;
-    }
-
-    document.getElementById('digitaltime').innerHTML = displayHour + ':' +
-        (minute < 10 ? '0' + minute : minute) + ':' + second;
-
-    // Update time in words
     if (hour > 12) {
         hour = hour % 12;
     }
     if (hour === 0) {
         hour = 12;
     }
-    const timeInWords = timeToWords(hour, minute);
-    document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
-}, 1000);
+
+    document.getElementById('time').innerHTML = 'It is ' + timeToWords(hour, minute) + '.';
+
+    setInterval(function () {
+        let currentTime = new Date();
+        let hour = currentTime.getHours();
+        let minute = currentTime.getMinutes();
+        let second = currentTime.getSeconds();
+
+        if (second < 10) {
+            second = '0' + second;
+        }
+
+        let displayHour = hour;
+        if (hour > 12) {
+            displayHour = hour % 12;
+        }
+        if (displayHour === 0) {
+            displayHour = 12;
+        }
+
+        document.getElementById('digitaltime').innerHTML = displayHour + ':' +
+            (minute < 10 ? '0' + minute : minute) + ':' + second;
+
+        if (hour > 12) {
+            hour = hour % 12;
+        }
+        if (hour === 0) {
+            hour = 12;
+        }
+        const timeInWords = timeToWords(hour, minute);
+        document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
+    }, 1000);
+}
 
 
 // Function to convert a number to words
@@ -197,13 +287,12 @@ function timeToWords(hour, minute) {
     return timeWords;
 }
 
-function latLong() {
+function latLong(latValue = position?.coords?.latitude, longValue = position?.coords?.longitude) {
     // Set lat and long from geolocation
     console.log("setting latitude and longitude");
-    lat = position.coords.latitude;
-    long = position.coords.longitude;
-    console.log(lat, long);
-    document.getElementById('latlong').innerHTML = lat + ', ' + long;
+    console.log(latValue, longValue);
+
+    displayCoordinates(latValue, longValue);
 }
 
 // Get city name from lat and long
@@ -220,6 +309,13 @@ function getCity(lat, long) {
 
 // Set date and time
 function setDateAndTime() {
+    const currentTime = new Date();
+    numHour = currentTime.getHours();
+    numMinute = currentTime.getMinutes();
+    numSecond = currentTime.getSeconds();
+    if (numSecond < 10) {
+        numSecond = '0' + numSecond;
+    }
 
     console.log("setting date and time");
 
@@ -239,51 +335,97 @@ function setDateAndTime() {
 
 
     // Set time HTML to HH:MM:SS
-    document.getElementById('digitaltime').innerHTML = numHour + ':' + numMinute + ':' + numSecond; + ' ' + timeZone;
+    document.getElementById('digitaltime').innerHTML = numHour + ':' + numMinute + ':' + numSecond + ' ' + timeZone;
 
 }
 
 // Get sunrise and sunset times
+function parseSunTime(timeStr, date = new Date()) {
+    const [time, period] = timeStr.split(' ');
+    let [hours, minutes, seconds] = time.split(':').map(Number);
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    const result = new Date(date);
+    result.setHours(hours, minutes, seconds || 0, 0);
+    return result;
+}
+
+function calculateSolarMidnight(sunsetMoment, nextSunriseMoment) {
+    return new Date((sunsetMoment.getTime() + nextSunriseMoment.getTime()) / 2);
+}
+
+function formatTimeLabel(timeValue) {
+    return timeValue.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+}
+
 function getSunriseSunset(lat, long) {
     console.log("getting sunrise and sunset times");
     fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}`)
         .then(response => response.json())
         .then(data => {
-            sunrise = data.results.sunrise;
-            sunset = data.results.sunset;
-            dawn = data.results.dawn;
-            dusk = data.results.dusk;
-            solarNoon = data.results.solar_noon;
+            if (data.status !== 'OK') return;
 
-            // Getting Tomorrow's Sunrise Requires a different API call
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            sunriseTime = parseSunTime(data.results.sunrise, today);
+            sunsetTime = parseSunTime(data.results.sunset, today);
+            dawnTime = parseSunTime(data.results.dawn, today);
+            duskTime = parseSunTime(data.results.dusk, today);
+            solarNoonTime = parseSunTime(data.results.solar_noon, today);
+
+            document.getElementById('sunrise').innerHTML = formatTimeLabel(sunriseTime);
+            document.getElementById('sunset').innerHTML = formatTimeLabel(sunsetTime);
+
             fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&date=tomorrow`)
                 .then(response => response.json())
-                .then(data => {
-                    nextSunrise = data.results.sunrise;
+                .then(tomorrowData => {
+                    if (tomorrowData.status !== 'OK') return;
+
+                    nextSunriseTime = parseSunTime(tomorrowData.results.sunrise, tomorrow);
+                    solarMidnightTime = calculateSolarMidnight(sunsetTime, nextSunriseTime);
+
+                    updateSkyGradient();
+                    console.log(sunriseTime, sunsetTime, dawnTime, duskTime, solarNoonTime, solarMidnightTime, nextSunriseTime);
                 });
-
-            // Calculate solar midnight as midpoint between today's sunset and tomorrow's sunrise
-            solarMidnight = new Date((new Date(nextSunrise).getTime() + new Date(sunset).getTime()) / 2);
-
-            console.log(sunrise, sunset, dawn, dusk, solarNoon, solarMidnight, nextSunrise);
-
-            // Format sunrise and sunset times
-            sunrise = sunrise.slice(11, 16);
-            sunset = sunset.slice(11, 16);
-
-
-            document.getElementById('sunrise').innerHTML = sunrise;
-            document.getElementById('sunset').innerHTML = sunset;
-        });
-
+        })
+        .catch(err => console.error('Sunrise/sunset fetch failed:', err));
 }
 
-//  Get moon phase with lunarphase-js
-function getMoonPhase(lat, long) {
-    console.log("getting moon phase");
-    const moonPhase = new Moon(lat, long);
-    console.log(moonPhase);
-    document.getElementById('moon-phase').innerHTML = moonPhase;
+// Get moon phase with lunarphase-js (phase is date-based; lat used for icon flip only)
+function getMoonPhase(lat) {
+    const phaseName = Moon.lunarPhase();
+    const displayName = phaseName === 'New' || phaseName === 'Full'
+        ? phaseName + ' Moon'
+        : phaseName;
+
+    document.getElementById('moon-phase').innerHTML = displayName;
+
+    const phaseMap = {
+        'New': 'new',
+        'Waxing Crescent': 'waxingcrescent',
+        'First Quarter': 'firstquarter',
+        'Waxing Gibbous': 'waxinggibbous',
+        'Full': 'full',
+        'Waning Gibbous': 'waninggibbous',
+        'Last Quarter': 'thirdquarter',
+        'Waning Crescent': 'waningcrescent',
+    };
+
+    const moonIcon = document.getElementById('moon-icon');
+    const phase = phaseMap[phaseName];
+    if (phase) {
+        moonIcon.src = 'img/icon_moon_' + phase + '.svg';
+    }
+
+    // Southern hemisphere: mirror icon horizontally (lit side appears on opposite side)
+    moonIcon.classList.toggle('flipped', lat < 0);
 }
 
 // NOT WORKING, NEED API OR NEW CALCULATION CODE Calculate moon phase based on daten

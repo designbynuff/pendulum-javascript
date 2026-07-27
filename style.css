@@ -23,6 +23,8 @@
 :root {
     --nuff-light: #bfd0fc;
     --nuff-dark: #1b1c21;
+    --text-color: var(--nuff-light);
+    --icon-filter: brightness(0) saturate(100%) invert(1);
 }
 
 /* Font Variables */
@@ -33,7 +35,7 @@
 
 body {
     background-color: var(--nuff-dark);
-    color: var(--nuff-light);
+    color: var(--text-color);
     font-family: var(--font-mono);
 }
 
@@ -100,16 +102,18 @@ button.outline:focus {
     font-weight: 800;
     line-height: 0.9;
     letter-spacing: -1px;
-    margin-bottom: 8rem;
+    margin-bottom: 4rem;
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin: 4rem;
-    min-height: 90vh;
+    min-height: 100dvh;
+    box-sizing: border-box;
 }
+
 
 .footer p {
     font-family: var(--font-mono);
@@ -132,8 +136,10 @@ a:focus {
 .secondary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    border-top: 1px solid #bfd0fc;
-    padding: 2rem 0;
+    gap: 2rem;
+    border-top: 1px solid var(--text-color);
+    /* margin-top: 3rem; */
+    padding: 2rem 0 0;
 }
 
 /* .details {} */
@@ -145,4 +151,10 @@ a:focus {
 
 .icon {
     margin-right: 1rem;
+    filter: var(--icon-filter);
+    opacity: 0.95;
+}
+
+.icon.flipped {
+    transform: scaleX(-1);
 }
