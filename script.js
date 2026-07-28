@@ -233,17 +233,24 @@ function startApp(lat, long) {
     startClock();
 }
 
+function normalizeHour(hour) {
+    const hour12 = hour % 12;
+
+    // If hour is 0 (midnight), return 12; otherwise, return the hour in 12-hour format
+    return hour12 === 0 ? 12 : hour12;
+}
+
+function getNextHour(hour) {
+    const normalizedHour = normalizeHour(hour);
+
+    // If it's 12, the next hour is 1; otherwise, just add 1
+    return normalizedHour === 12 ? 1 : normalizedHour + 1;
+}
+
 function startClock() {
     let now = new Date();
     let hour = now.getHours();
     let minute = now.getMinutes();
-
-    if (hour > 12) {
-        hour = hour % 12;
-    }
-    if (hour === 0) {
-        hour = 12;
-    }
 
     document.getElementById('time').innerHTML = 'It is ' + timeToWords(hour, minute) + '.';
 
@@ -257,23 +264,11 @@ function startClock() {
             second = '0' + second;
         }
 
-        let displayHour = hour;
-        if (hour > 12) {
-            displayHour = hour % 12;
-        }
-        if (displayHour === 0) {
-            displayHour = 12;
-        }
+        const displayHour = normalizeHour(hour);
 
         document.getElementById('digitaltime').innerHTML = displayHour + ':' +
             (minute < 10 ? '0' + minute : minute) + ':' + second;
 
-        if (hour > 12) {
-            hour = hour % 12;
-        }
-        if (hour === 0) {
-            hour = 12;
-        }
         const timeInWords = timeToWords(hour, minute);
         document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
 
@@ -303,6 +298,8 @@ function numberToWords(number) {
 // Function to convert the time to words
 function timeToWords(hour, minute) {
     let timeWords = '';
+    const normalizedHour = normalizeHour(hour);
+    const nextHour = getNextHour(hour);
 
     // Noon and midnight
     if (hour === 12 && minute === 0) {
@@ -313,20 +310,20 @@ function timeToWords(hour, minute) {
 
     // On the hour, quarters and halves
     else if (minute === 0) {
-        timeWords = numberToWords(hour) + ' o\'clock';
+        timeWords = numberToWords(normalizedHour) + ' o\'clock';
     } else if (minute === 15) {
-        timeWords = 'quarter past ' + numberToWords(hour);
+        timeWords = 'quarter past ' + numberToWords(normalizedHour);
     } else if (minute === 30) {
-        timeWords = 'half past ' + numberToWords(hour);
+        timeWords = 'half past ' + numberToWords(normalizedHour);
     } else if (minute === 45) {
-        timeWords = 'quarter to ' + numberToWords(hour + 1);
+        timeWords = 'quarter to ' + numberToWords(nextHour);
     }
 
     // Everything else
     else if (minute < 30) {
-        timeWords = numberToWords(minute) + ' past ' + numberToWords(hour);
+        timeWords = numberToWords(minute) + ' past ' + numberToWords(normalizedHour);
     } else {
-        timeWords = numberToWords(60 - minute) + ' to ' + numberToWords(hour + 1);
+        timeWords = numberToWords(60 - minute) + ' to ' + numberToWords(nextHour);
     }
 
     return timeWords;
