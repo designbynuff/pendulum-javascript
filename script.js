@@ -1,13 +1,21 @@
 // Import lunarphase-js through the package entrypoint.
 import { Moon } from "lunarphase-js";
 import moonNewIcon from './img/icon_moon_new.svg';
+import moonNewDarkIcon from './img/icon_moon_new_dark.svg';
 import moonWaxingCrescentIcon from './img/icon_moon_waxingcrescent.svg';
+import moonWaxingCrescentDarkIcon from './img/icon_moon_waxingcrescent_dark.svg';
 import moonFirstQuarterIcon from './img/icon_moon_firstquarter.svg';
+import moonFirstQuarterDarkIcon from './img/icon_moon_firstquarter_dark.svg';
 import moonWaxingGibbousIcon from './img/icon_moon_waxinggibbous.svg';
+import moonWaxingGibbousDarkIcon from './img/icon_moon_waxinggibbous_dark.svg';
 import moonFullIcon from './img/icon_moon_full.svg';
+import moonFullDarkIcon from './img/icon_moon_full_dark.svg';
 import moonWaningGibbousIcon from './img/icon_moon_waninggibbous.svg';
+import moonWaningGibbousDarkIcon from './img/icon_moon_waninggibbous_dark.svg';
 import moonThirdQuarterIcon from './img/icon_moon_thirdquarter.svg';
+import moonThirdQuarterDarkIcon from './img/icon_moon_thirdquarter_dark.svg';
 import moonWaningCrescentIcon from './img/icon_moon_waningcrescent.svg';
+import moonWaningCrescentDarkIcon from './img/icon_moon_waningcrescent_dark.svg';
 
 // Default lat/long for NYC—used as fallback if user doesn't allow location access
 const defaultLat = 40.7128;
@@ -57,6 +65,19 @@ let sunriseTime, sunsetTime, dawnTime, duskTime, solarNoonTime, solarMidnightTim
 // let moonphase;
 let position;
 let gradientEnabled = true;
+let currentIconTheme = 'light';
+let currentMoonPhaseName = 'New';
+
+const moonPhaseIcons = {
+    New: { light: moonNewIcon, dark: moonNewDarkIcon },
+    'Waxing Crescent': { light: moonWaxingCrescentIcon, dark: moonWaxingCrescentDarkIcon },
+    'First Quarter': { light: moonFirstQuarterIcon, dark: moonFirstQuarterDarkIcon },
+    'Waxing Gibbous': { light: moonWaxingGibbousIcon, dark: moonWaxingGibbousDarkIcon },
+    Full: { light: moonFullIcon, dark: moonFullDarkIcon },
+    'Waning Gibbous': { light: moonWaningGibbousIcon, dark: moonWaningGibbousDarkIcon },
+    'Last Quarter': { light: moonThirdQuarterIcon, dark: moonThirdQuarterDarkIcon },
+    'Waning Crescent': { light: moonWaningCrescentIcon, dark: moonWaningCrescentDarkIcon },
+};
 
 const skyPhases = {
     dawn: ['oklch(39.82% 0.1068 255.38 / 1)', 'oklch(57.89% 0.1535 249.79 / 1)'],
@@ -95,6 +116,48 @@ function displayCoordinates(lat, long) {
     document.getElementById('latlong').textContent = formatCoordinate(lat) + ', ' + formatCoordinate(long);
 }
 
+function applyIconTheme(textColor) {
+    const nextTheme = textColor === '#1b1c21' ? 'dark' : 'light';
+    currentIconTheme = nextTheme;
+
+    document.querySelectorAll('.icon').forEach((icon) => {
+        if (icon.id === 'moon-icon') {
+            return;
+        }
+
+        const source = icon.getAttribute('src');
+        if (!source) {
+            return;
+        }
+
+        if (!icon.dataset.lightSrc) {
+            icon.dataset.lightSrc = source;
+            icon.dataset.darkSrc = source.replace(/\.svg(\?.*)?$/, '_dark.svg$1');
+        }
+
+        const themedSource = nextTheme === 'dark'
+            ? icon.dataset.darkSrc
+            : icon.dataset.lightSrc;
+
+        if (themedSource && themedSource !== source) {
+            icon.src = themedSource;
+        }
+    });
+
+    updateMoonIconTheme();
+}
+
+function updateMoonIconTheme() {
+    const moonIcon = document.getElementById('moon-icon');
+    const moonIcons = moonPhaseIcons[currentMoonPhaseName];
+
+    if (!moonIcon || !moonIcons) {
+        return;
+    }
+
+    moonIcon.src = currentIconTheme === 'dark' ? moonIcons.dark : moonIcons.light;
+}
+
 function setGradientMode(enabled, now = new Date()) {
     gradientEnabled = enabled;
 
@@ -105,14 +168,17 @@ function setGradientMode(enabled, now = new Date()) {
     }
 
     if (!enabled) {
-        document.documentElement.style.setProperty('--text-color', '#bfd0fc');
+        const textColor = '#bfd0fc';
+        document.documentElement.style.setProperty('--text-color', textColor);
+        document.documentElement.style.setProperty('--icon-color', textColor);
         document.body.style.background = 'var(--nuff-dark)';
-        document.body.style.color = '#bfd0fc';
+        document.body.style.color = textColor;
         document.body.style.transition = 'background 0.8s ease, color 0.8s ease';
         document.querySelectorAll('a').forEach((link) => {
-            link.style.color = '#bfd0fc';
-            link.style.borderBottomColor = '#bfd0fc';
+            link.style.color = textColor;
+            link.style.borderBottomColor = textColor;
         });
+        applyIconTheme(textColor);
         return;
     }
 
@@ -205,6 +271,8 @@ function updateSkyGradient(now = new Date()) {
 
             document.documentElement.style.setProperty('--bg-gradient', gradient);
             document.documentElement.style.setProperty('--text-color', textColor);
+            applyIconTheme(textColor);
+
             document.body.style.background = gradient;
             document.body.style.transition = 'background 0.8s ease, color 0.8s ease';
             document.body.style.color = textColor;
@@ -443,28 +511,16 @@ function getSunriseSunset(lat, long) {
 // Get moon phase with lunarphase-js (phase is date-based; lat used for icon flip only)
 function getMoonPhase(lat) {
     const phaseName = Moon.lunarPhase();
+    currentMoonPhaseName = phaseName;
     const displayName = phaseName === 'New' || phaseName === 'Full'
         ? phaseName + ' Moon'
         : phaseName;
 
     document.getElementById('moon-phase').innerHTML = displayName;
 
-    const phaseMap = {
-        'New': moonNewIcon,
-        'Waxing Crescent': moonWaxingCrescentIcon,
-        'First Quarter': moonFirstQuarterIcon,
-        'Waxing Gibbous': moonWaxingGibbousIcon,
-        'Full': moonFullIcon,
-        'Waning Gibbous': moonWaningGibbousIcon,
-        'Last Quarter': moonThirdQuarterIcon,
-        'Waning Crescent': moonWaningCrescentIcon,
-    };
+    updateMoonIconTheme();
 
     const moonIcon = document.getElementById('moon-icon');
-    const phaseIcon = phaseMap[phaseName];
-    if (phaseIcon) {
-        moonIcon.src = phaseIcon;
-    }
 
     // Southern hemisphere: mirror icon horizontally (lit side appears on opposite side)
     moonIcon.classList.toggle('flipped', lat < 0);
