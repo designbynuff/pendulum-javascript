@@ -1,5 +1,13 @@
 // Import lunarphase-js through the package entrypoint.
 import { Moon } from "lunarphase-js";
+import moonNewIcon from './img/icon_moon_new.svg';
+import moonWaxingCrescentIcon from './img/icon_moon_waxingcrescent.svg';
+import moonFirstQuarterIcon from './img/icon_moon_firstquarter.svg';
+import moonWaxingGibbousIcon from './img/icon_moon_waxinggibbous.svg';
+import moonFullIcon from './img/icon_moon_full.svg';
+import moonWaningGibbousIcon from './img/icon_moon_waninggibbous.svg';
+import moonThirdQuarterIcon from './img/icon_moon_thirdquarter.svg';
+import moonWaningCrescentIcon from './img/icon_moon_waningcrescent.svg';
 
 // Default lat/long for NYC—used as fallback if user doesn't allow location access
 const defaultLat = 40.7128;
@@ -445,20 +453,20 @@ function getMoonPhase(lat) {
     document.getElementById('moon-phase').innerHTML = displayName;
 
     const phaseMap = {
-        'New': 'new',
-        'Waxing Crescent': 'waxingcrescent',
-        'First Quarter': 'firstquarter',
-        'Waxing Gibbous': 'waxinggibbous',
-        'Full': 'full',
-        'Waning Gibbous': 'waninggibbous',
-        'Last Quarter': 'thirdquarter',
-        'Waning Crescent': 'waningcrescent',
+        'New': moonNewIcon,
+        'Waxing Crescent': moonWaxingCrescentIcon,
+        'First Quarter': moonFirstQuarterIcon,
+        'Waxing Gibbous': moonWaxingGibbousIcon,
+        'Full': moonFullIcon,
+        'Waning Gibbous': moonWaningGibbousIcon,
+        'Last Quarter': moonThirdQuarterIcon,
+        'Waning Crescent': moonWaningCrescentIcon,
     };
 
     const moonIcon = document.getElementById('moon-icon');
-    const phase = phaseMap[phaseName];
-    if (phase) {
-        moonIcon.src = 'img/icon_moon_' + phase + '.svg';
+    const phaseIcon = phaseMap[phaseName];
+    if (phaseIcon) {
+        moonIcon.src = phaseIcon;
     }
 
     // Southern hemisphere: mirror icon horizontally (lit side appears on opposite side)
