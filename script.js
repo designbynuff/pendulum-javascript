@@ -99,7 +99,6 @@ function setGradientMode(enabled, now = new Date()) {
 
     if (!enabled) {
         document.documentElement.style.setProperty('--text-color', '#bfd0fc');
-        document.documentElement.style.setProperty('--icon-filter', 'brightness(0) saturate(100%) invert(1)');
         document.body.style.background = 'var(--nuff-dark)';
         document.body.style.color = '#bfd0fc';
         document.body.style.transition = 'background 0.8s ease, color 0.8s ease';
@@ -194,15 +193,11 @@ function updateSkyGradient(now = new Date()) {
             const topLightness = parseOklch(topColor)?.l ?? 0;
             const averageLightness = (bottomLightness + topLightness) / 2;
 
-            // Set text color based on average lightness
+            // Set text colour based on average lightness
             const textColor = averageLightness > 0.6 ? '#1b1c21' : '#bfd0fc';
-            const iconFilter = textColor === '#1b1c21'
-                ? 'brightness(0) saturate(100%)'
-                : 'brightness(0) saturate(100%) invert(1)';
 
             document.documentElement.style.setProperty('--bg-gradient', gradient);
             document.documentElement.style.setProperty('--text-color', textColor);
-            document.documentElement.style.setProperty('--icon-filter', iconFilter);
             document.body.style.background = gradient;
             document.body.style.transition = 'background 0.8s ease, color 0.8s ease';
             document.body.style.color = textColor;
@@ -274,6 +269,10 @@ function startClock() {
         }
         const timeInWords = timeToWords(hour, minute);
         document.getElementById('time').innerHTML = 'It is ' + timeInWords + '.';
+
+        if (gradientEnabled) {
+            updateSkyGradient(new Date());
+        }
     }, 1000);
 }
 

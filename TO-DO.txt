@@ -22,10 +22,13 @@
     - Some messy stuff around "thirteen", 
     - make sure noon/midnight appear when grammatically correct and revert to "twelve" otherwise
 [x] Improve moon phase calculation (there are precise algos for that)
-- Link to SunriseSunset.io (required for free API)
+[x] Link to SunriseSunset.io (required for free API)
     - Possibly on about page?
-- Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.
+    - This might as well be a full colophon: Jaune for fonts, lunar-js for moon phase
+    - Maybe switch the Time link to be here?
+    - It could be on the landing page if I want, or a modal similar to Sniff
+[x]] Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.
     - Brutalism mode switch?
 - Word handling for midnight—we can say "five to midnight" or "ten past midnight", right? We wouldn't necessarily do it for noon. So maybe a very edgy edge case?
     - On this, I'd like to be able to control what time it is for testing/screenshot purposes.
-- Add a setInterval so it auto-updates?
+[x] Add a setInterval so it auto-updates?

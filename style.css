@@ -177,7 +177,8 @@ a:focus {
 
 .icon {
     margin-right: 1rem;
-    filter: var(--icon-filter);
+    color: var(--text-color);
+    fill: var(--text-color);
     opacity: 0.95;
 }
 
