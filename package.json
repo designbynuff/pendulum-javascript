@@ -1,8 +1,17 @@
 {
+  "name": "pendulum-javascript",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "dependencies": {
     "lunarphase-js": "^2.0.3"
   },
   "scripts": {
-    "dev": "npx serve ."
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.1.5"
   }
 }

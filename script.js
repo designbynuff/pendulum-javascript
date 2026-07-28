@@ -1,32 +1,5 @@
-// Moon phase implementation that works without a bundled dependency.
-function getMoonPhaseName(date = new Date()) {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    const c = 0 + (year << 8) + (year << 16);
-    const e = 0;
-    const jd = Math.floor((1461 * (year + 4800 + (month - 14) / 12)) / 4) +
-        Math.floor((367 * (month - 2 - 12 * ((month - 14) / 12))) / 12) -
-        Math.floor((3 * Math.floor((year + 4900 + (month - 14) / 12) / 100)) / 4) +
-        day - 32075;
-
-    const b = (jd - 1867216.25) / 29.530588853;
-    const phase = (b - Math.floor(b)) * 8;
-
-    const phases = [
-        'New',
-        'Waxing Crescent',
-        'First Quarter',
-        'Waxing Gibbous',
-        'Full',
-        'Waning Gibbous',
-        'Last Quarter',
-        'Waning Crescent'
-    ];
-
-    return phases[Math.round(phase) % phases.length];
-}
+// Import lunarphase-js through the package entrypoint.
+import { Moon } from "lunarphase-js";
 
 // Default lat/long for NYC—used as fallback if user doesn't allow location access
 const defaultLat = 40.7128;
@@ -464,7 +437,7 @@ function getSunriseSunset(lat, long) {
 
 // Get moon phase with lunarphase-js (phase is date-based; lat used for icon flip only)
 function getMoonPhase(lat) {
-    const phaseName = getMoonPhaseName();
+    const phaseName = Moon.lunarPhase();
     const displayName = phaseName === 'New' || phaseName === 'Full'
         ? phaseName + ' Moon'
         : phaseName;
