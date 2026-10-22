@@ -116,6 +116,35 @@ function displayCoordinates(lat, long) {
     document.getElementById('latlong').textContent = formatCoordinate(lat) + ', ' + formatCoordinate(long);
 }
 
+function iconPathFromSrc(src) {
+    if (!src) {
+        return '';
+    }
+
+    try {
+        return new URL(src, window.location.href).pathname;
+    } catch {
+        return src;
+    }
+}
+
+function ensureIconThemeDataset(icon) {
+    if (icon.dataset.lightSrc && icon.dataset.darkSrc) {
+        return;
+    }
+
+    const path = iconPathFromSrc(icon.getAttribute('src'));
+    if (!path) {
+        return;
+    }
+
+    const lightPath = path.replace(/_dark\.svg(\?.*)?$/i, '.svg$1');
+    const darkPath = lightPath.replace(/\.svg(\?.*)?$/i, '_dark.svg$1');
+
+    icon.dataset.lightSrc = lightPath;
+    icon.dataset.darkSrc = darkPath;
+}
+
 function applyIconTheme(textColor) {
     const nextTheme = textColor === '#1b1c21' ? 'dark' : 'light';
     currentIconTheme = nextTheme;
@@ -125,21 +154,13 @@ function applyIconTheme(textColor) {
             return;
         }
 
-        const source = icon.getAttribute('src');
-        if (!source) {
-            return;
-        }
-
-        if (!icon.dataset.lightSrc) {
-            icon.dataset.lightSrc = source;
-            icon.dataset.darkSrc = source.replace(/\.svg(\?.*)?$/, '_dark.svg$1');
-        }
+        ensureIconThemeDataset(icon);
 
         const themedSource = nextTheme === 'dark'
             ? icon.dataset.darkSrc
             : icon.dataset.lightSrc;
 
-        if (themedSource && themedSource !== source) {
+        if (themedSource) {
             icon.src = themedSource;
         }
     });
@@ -492,6 +513,8 @@ function getSunriseSunset(lat, long) {
 
             document.getElementById('sunrise').innerHTML = formatTimeLabel(sunriseTime);
             document.getElementById('sunset').innerHTML = formatTimeLabel(sunsetTime);
+
+            updateSkyGradient();
 
             fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&date=tomorrow`)
                 .then(response => response.json())

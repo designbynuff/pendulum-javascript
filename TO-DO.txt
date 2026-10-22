@@ -1,13 +1,13 @@
 [x] Connect to suncalc or some other library/API that can do sunrise/sunset/moonphase
     [x] Current sunrise/sunset/moonrise appear inaccurate—should be fixed by switching source
-- Get timezone to show up
+[] Get timezone to show up
 [x] Speed up performance
 [x] - Improve geolocation
         [x] Timeout/failure handling
         [x] Permissions request on all devices
         [] Error handling
         [] Give user ability to re-trigger location permission request 
-- Allow users to enter/select a location of their choice, not just where they are right now?
+[] Allow users to enter/select a location of their choice, not just where they are right now?
 [x] Reduce number of decimals for lat/long
 [x] Evolving gradient background
     [x] Light/dark icons according to what bg is displayed
@@ -18,17 +18,20 @@
     [x] Define gradients for these 6 points then interpolate between them
     [x] Render gradients with OKLCH (https://css-tricks.com/almanac/functions/o/oklch/)
     - Add "cloudy" mode (desaturated, dull gradients)?
-- Fix language issues in word time:
-    - Some messy stuff around "thirteen", 
-    - make sure noon/midnight appear when grammatically correct and revert to "twelve" otherwise
+[] Fix language issues in word time:
+    [] Some messy stuff around "thirteen", 
+    [] make sure noon/midnight appear when grammatically correct and revert to "twelve" otherwise
 [x] Improve moon phase calculation (there are precise algos for that)
 [x] Link to SunriseSunset.io (required for free API)
     - Possibly on about page?
     - This might as well be a full colophon: Jaune for fonts, lunar-js for moon phase
     - Maybe switch the Time link to be here?
     - It could be on the landing page if I want, or a modal similar to Sniff
-[x]] Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.
+[x] Maybe a toggle to switch between plain mode and sky mode—some folks will possibly prefer the typography-only approach.
     - Brutalism mode switch?
-- Word handling for midnight—we can say "five to midnight" or "ten past midnight", right? We wouldn't necessarily do it for noon. So maybe a very edgy edge case?
+[x] Word handling for midnight—we can say "five to midnight" or "ten past midnight", right? We wouldn't necessarily do it for noon. So maybe a very edgy edge case?
     - On this, I'd like to be able to control what time it is for testing/screenshot purposes.
 [x] Add a setInterval so it auto-updates?
+[] Character in "O’Clock" should be a curly (typographer’s) apostrophe, not a straight one. Can either directly drop in the `&rsquo;` character, use a library like smartquotes.js, or build a helper function.
+[] Figure out best way to keep metadata towards bottom of screen while maintaining responsive layout on all devices. Maybe just a min-height for the time in words section?
+[] Someone mentioned wanting to set this as their browser start page—but that would require a separate path straight through to using current location rather than selecting a choice, which means either rewriting the page structure or adding querys to the path so it can be saved.
